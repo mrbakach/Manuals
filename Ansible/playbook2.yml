@@ -1,0 +1,14 @@
+---
+- name: Install web-server apache
+  hosts: all
+  become: yes
+
+  tasks:
+  - name: Remove Apache WebServer
+    yum: name=httpd state=removed
+
+  - name: Install Nginx
+    yum: name=nginx state=installed
+  
+  - name: Start Nginx server
+    service: name=nginx state=started enabled=yes
