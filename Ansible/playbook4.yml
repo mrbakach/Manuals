@@ -1,0 +1,43 @@
+---
+- name: Playbook for variables lesson
+  hosts: all
+  become: yes
+
+  vars:
+    message1: Hello
+    message2: World
+    secret  : JHJHHDDHW8SS8F8YSAF
+  tasks:
+  
+  - name: Print Secret variable
+    debug:
+      var: secret
+ 
+  - name: Print message
+    debug:
+      msg: "Secret phrase: {{ secret }}"
+
+  - name: Print message
+    debug:
+      msg: "Owner of this server --> {{ owner }} <--"
+
+  - set_fact: full_message="{{ message1}} {{ message2 }} from {{ owner }}"
+  
+  - debug:
+      var: full_message
+
+  - debug:
+      var: ansible_ssh_host_key_rsa_public
+
+  - shell: uptime
+    register: results
+
+  - debug: 
+      var: results
+
+
+
+
+
+
+
