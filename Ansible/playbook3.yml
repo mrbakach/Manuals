@@ -1,0 +1,26 @@
+---
+- name: Install Nginx and upload my Web Page
+  hosts: all
+  become: yes
+
+  vars:
+    source_file: ./my_website/index.html
+    destin_file: /var/www/html
+
+  tasks:
+  - name: Removed Nginx Server
+    yum: name=nginx state=removed
+
+  - name: install Apache Server
+    yum: name=httpd state=installed
+
+  - name: copy files in servers
+    copy: src={{ source_file }} dest={{ destin_file }} mode=0555
+    notify: Restart Apache
+
+  - name: start and enable server
+    service: name=httpd state=started enabled=yes
+
+  handlers:
+  - name: Restart Apache
+    service: name=httpd state=restarted
