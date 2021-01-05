@@ -1,5 +1,5 @@
 ---
-- name: Install web-server apache
+- name: Install web-server nginx and remove Apache
   hosts: all
   become: yes
 
