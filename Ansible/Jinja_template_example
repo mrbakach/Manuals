@@ -1,0 +1,96 @@
+Пишутся в формате jinja2. Расширение делается j2
+template проверяет есть ли файле переменные, и в случае если есть, он их заменит. По сравнению с copy
+
+
+
+
+
+--------------Example jinja index------------
+<HTML>
+<HEAD>
+<TITLE>ADV-IT</TITLE>
+<SCRIPT LANGUAGE="JavaScript">
+      var sizes = new Array(0,1,2,4,8,10,12);
+      sizes.pos = 0;
+
+function Elastic()
+{
+    var el = document.all.elastic
+    if (null == el.direction)el.direction = 1
+    else if ((sizes.pos > sizes.length - 2) || (0 == sizes.pos))
+    el.direction *= -1
+    el.style.letterSpacing = sizes[sizes.pos += el.direction]
+setTimeout('Elastic()',100)
+}
+
+</SCRIPT>
+<BODY  background="kamni.jpg"  onLoad=Elastic()>
+<CENTER>
+<font color="gold"> Owner of this Server s: {{ owner }}<br>
+<font color="white"><h2>Welcome to my World!</h2>
+<font color="yellow"><H1 ID="elastic" ALIGN="Center">ADV-IT</H1>
+<br>
+Server Host Name: {{ ansible_hostname }}<br>
+Server Os Family is: {{ ansible_os_family }}<br>
+IP Address of this Server is: {{ ansible_default_ipv4.address }}<>br
+
+</body>
+</HTML>
+--------------------------------------------------
+
+--------------------------------------------
+INDEX Playbook
+---------------------------------------------
+---
+- name: Install Web_server and upload files for Redhat/Debian(Jinja Template)
+  hosts: all
+  become: yes
+
+  vars:
+    source_folder: ./my_website/
+    destin_folder: /var/www/html
+
+  tasks:
+  - block:   # ===========Block for RedHat============
+
+      - name: install Apache Server for RedHat
+        yum: name=httpd state=installed
+
+      - name: start and enable server
+        service: name=httpd state=started enabled=yes
+
+    when: ansible_os_family == "RedHat"
+
+  - block:   # ===========Block for Debian============
+
+      - name: install Apache Server for Debian
+        apt: name=apache2 state=latest
+
+      - name: start and enable server Debian
+        service: name=apache2 state=started enabled=yes
+
+    when: ansible_os_family == "Debian"
+
+  - name: copy jinja template
+    template: src={{ source_folder }}/index.j2 dest={{ destin_folder }}/index.html mode=0555 ###### Заменяем copy на template и выбираем конкретно index.j2 с заменой index.html
+    notify:
+     - Restart Apache Redhat
+     - Restart Apache Debian
+
+  - name: copy files in servers
+    copy: src={{ source_folder }} dest={{ destin_folder }} mode=0555
+    loop:
+    - "kamni.jpg"   ##########Удаляем отсюда index.html
+
+    notify:
+     - Restart Apache Redhat
+     - Restart Apache Debian
+
+  handlers:
+  - name: Restart Apache Redhat
+    service: name=httpd state=restarted
+    when: ansible_os_family == "RedHat"
+
+  - name: Restart Apache Debian
+    service: name=apache2 state=restarted
+    when: ansible_os_family == "Debian"
