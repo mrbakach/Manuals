@@ -1,0 +1,7 @@
+---
+- name: Install Web_server and upload files for Redhat/Debian(Jinja Template)
+  hosts: all
+  become: yes
+
+  roles:
+   - { role: deploy_apache_web, when: ansible_system == "Linux" }
