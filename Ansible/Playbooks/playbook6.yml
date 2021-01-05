@@ -1,5 +1,5 @@
 ---
-- name: Install Web_server and upload files for Redhat/Debian(Loop, With_fileglob)
+- name: Install Web-server and upload files for Redhat/Debian(Loop, With_fileglob)
   hosts: all
   become: yes
 
