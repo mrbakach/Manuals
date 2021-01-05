@@ -1,0 +1,51 @@
+---
+- name: Install Web_server and upload files for Redhat/Debian(Loop, With_fileglob)
+  hosts: all
+  become: yes
+
+  vars:
+    source_folder: ./my_website/
+    destin_folder: /var/www/html
+
+  tasks:
+  - block:   # ===========Block for RedHat============
+  
+      - name: install Apache Server for RedHat
+        yum: name=httpd state=installed
+
+      - name: start and enable server
+        service: name=httpd state=started enabled=yes
+
+    when: ansible_os_family == "RedHat"
+
+  - block:   # ===========Block for Debian============
+  
+      - name: install Apache Server for Debian
+        apt: name=apache2 state=latest
+
+      - name: start and enable server Debian
+        service: name=apache2 state=started enabled=yes
+
+    when: ansible_os_family == "Debian"
+
+  - name: copy files in servers
+    copy: src={{ source_folder }} dest={{ destin_folder }} mode=0555
+    with_fileglob: "{{ source_folder}}/*.*"
+   
+#   loop: 
+#    - "index.html"
+#    - "image1.jpg"
+#    - "image2.jpg"
+
+    notify: 
+     - Restart Apache Redhat
+     - Restart Apache Debian
+
+  handlers:
+  - name: Restart Apache Redhat
+    service: name=httpd state=restarted
+    when: ansible_os_family == "RedHat"
+  
+  - name: Restart Apache Debian
+    service: name=apache2 state=restarted
+    when: ansible_os_family == "Debian"
