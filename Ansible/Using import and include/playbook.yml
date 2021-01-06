@@ -1,0 +1,16 @@
+---
+- name: Use Import and include
+  hosts: all
+  become: yes
+
+  vars: 
+    mytext: 'Hello of Max'
+  tasks:
+  - name: ping test
+    ping:
+
+  - name: Create folder
+    include: create_folder.yml
+  
+  - name: Create File
+    include: create_file.yml mytext="Hello from Minsk"
