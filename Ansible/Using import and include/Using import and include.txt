@@ -1,0 +1,30 @@
+Отличие import от include.Если вы используете импорт, то ансибл проходится по всему плэйбуку, находит импорт в коде и сразу же копирует файлы.
+А инклюд все по порядку выполняет. Чаще используют инклюд
+
+
+------------------Example
+---
+- name: My super Playbook
+  hosts: all
+  become: yes
+
+  vars: 
+    mytext: "Privet ot MAX"
+- name: Create folders
+  include: create_folders.yml
+- name: Create files
+  include: create_files.yml
+
+------------------Можно передать другую переменную
+------------------Example
+---
+- name: My super Playbook
+  hosts: all
+  become: yes
+
+  vars: 
+    mytext: "Privet ot MAX"
+- name: Create folders
+  include: create_folders.yml
+- name: Create files
+  include: create_files.yml mytext='hello from Minsk'
