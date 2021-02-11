@@ -1,0 +1,85 @@
+Discard old builds --> Max # of builds to keep	: 5
+
+
+-----PLUGINS----------
+SSH Agent and SSH Build Agents - для подключения Нод или Слэйвов
+Publish Over SSh - служит для деплоя файлов на сервера 
+Green Balls - для замены цветов job-ов
+
+---------CLI локальный----------
+Для локального использования, скачиваем линк через wget
+java -jar jenkins-cli.jar -auth username:password -s http://localhost:8080 who-am-i
+Принято использовать токены вместо пароля. Чтобы создать токен, логинимся созданным юзером 
+People-->Select Name user-->Configure-->API Token--> Add new Token(ТОкен желательно записать, ибо новый создать можно через сутки)
+#######
+Username: user_cli
+pass: 12345678(token: 1196a29ae5b25f9e9b857a8f6c158179e6)
+#######
+Принято экспортировать наши креденшиалы
+export JENKINS_USER_ID=user_cli
+export JENKINS_API_TOKEN=1196a29ae5b25f9e9b857a8f6c158179e6
+Для просмотра экспортированных данных. Грепуем 
+env | grep JENKINS
+java -jar jenkins-cli.jar -s http://localhost:8080 who-am-i
+---------------------------------------
+
+
+------------CLI удаленный--------------------
+скачиваем jenkins-cli.jar на машину и запускаем следующие команды
+$env:JENKINS_USER_ID="user_cli"
+$env:JENKINS_API_TOKEN="1196a29ae5b25f9e9b857a8f6c158179e6"
+java -jar jenkins-cli.jar -s http://13.53.36.116:8080 who-am-i
+
+#######Для Windows установка jdk 8##########
+скачиваем архив с jdk 8, распаковываем и запускаем следующие команды
+setx /m PATH "%PATH%;D:\Downloads\openlogic-openjdk-8u272-b10-windows-x64\openlogic-openjdk-8u272-b10-windows-64\bin"
+
+Для проверки установки java -version
+
+setx /m JAVA_HOME "D:\Downloads\openlogic-openjdk-8u272-b10-windows-x64\openlogic-openjdk-8u272-b10-windows-64"
+
+-------------------Depoyment git---------------
+Для подключения импортируем ssh ключи. На локальной машине устанавливаем гит. И все
+Плагин нужный Git PLugin 
+-----------------------------------------------
+
+
+------------Jenkins Jobs Triggers--------------
+Trigger Buld remotely - можно будет запускать с url. Любой кто откроет этот url может запустит жоб. Или с командной строки.
+Build after other project are built - стартовать job после того как другой закончится
+Build periodically - выполнять по расписанию. синтаксис cron
+Poll SCM - тоже самое что Build periodically. Но с гитом. Проверяет если есть изменения с прошлого билда, то автоматом запускает Job 
+
+--------------Trigger github jenkins------
+Для автоматического пуша из гитхаба используется плагин Github.
+Настроить вебхук в настройках репозитория гита:
+Payload URL    http://13.53.214.253:8080/github-webhook/
+content type   application/json
+в job поставить галочку GitHub project и добавить адрес репозитория, галочку GitHub hook trigger for GITScm polling
+---------------------------------------------
+
+------------Aws cli and Build parameters-------------
+в amazon linux мы просто запускаем sudo -su jenkins и вызываем aws configure. Вбиваем credentials и все
+в билде Женкинса можем пробовать вывести нажи инстансы командой aws ec2 describe-instances --region eu-north-1
+
+_____Parameters Example_______
+Ставим галочку "This project is parameterized" и выбираем параметры:
+	string parametr. default value - можем пставить /home и в build ls -la $NAME
+	choice parameter . choices - можем если для авс прописать регионы. и в билде aws ec2 describe-instances --region $NAME
+   	file parameter. в билде используется без знака $. Загрузили файл и и прочитать cat NAME
+______________________________
+----------Deploy to AWS Elastic Beanstalk-------------
+
+
+
+----------------------------------------------------
+
+----------------Pipeline Jenkins--------------------------
+Jenkins Pipeline - CI/CD Pipelne as a code. То есть мы программируем наши jobs. Описываем все шаги джоба не в юзер интерфейсе, а в коде. есть два синтаксиса: 
+-  Declarative Syntax - новый улучшенный - DSL
+-  Scripted Syntax - старый Groovy
+Нужно установить плагин Pipeline. Обязательнооо
+q
+
+
+

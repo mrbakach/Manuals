@@ -1,0 +1,16 @@
+echo "--------------------Bild Started-----------------"
+
+cat <<EOF > index.html
+<HTML>
+<HEAD>
+<TITLE>ADV-IT</TITLE>
+<CENTER>
+<font color="white"><h2>Welcome to my World!</h2>
+<font color="yellow"><H1 ID="elastic" ALIGN="Center">ADV-IT</H1>
+</body>
+</HTML>
+EOF
+
+echo "--------------------Bild Finished-----------------"
+
+
